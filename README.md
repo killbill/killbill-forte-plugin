@@ -10,6 +10,16 @@ Requirements
 
 The plugin needs a database. The latest version of the schema can be found here: https://github.com/killbill/killbill-forte-plugin/blob/master/src/main/resources/ddl.sql.
 
+Configuration
+-------------
+
+The following System Properties are required:
+
+* `org.killbill.billing.plugin.forte.merchantId`: your merchant id
+* `org.killbill.billing.plugin.forte.password`: your password
+* `org.killbill.billing.plugin.forte.host`: AGI host (e.g. www.paymentsgateway.net)
+* `org.killbill.billing.plugin.forte.port`: AGI port (e.g. 6050)
+
 Usage
 -----
 
