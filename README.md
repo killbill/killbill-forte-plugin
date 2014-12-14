@@ -8,7 +8,7 @@ Release builds are available on [Maven Central](http://search.maven.org/#search%
 Requirements
 ------------
 
-The plugin needs a database. The latest version of the schema can be found here: https://raw.github.com/killbill/killbill-forte-plugin/master/db/ddl.sql.
+The plugin needs a database. The latest version of the schema can be found here: https://github.com/killbill/killbill-forte-plugin/blob/master/src/main/resources/ddl.sql.
 
 Usage
 -----
