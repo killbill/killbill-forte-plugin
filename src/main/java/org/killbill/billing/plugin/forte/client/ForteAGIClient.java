@@ -161,8 +161,8 @@ public class ForteAGIClient {
     private static final Joiner MSG_LINE_JOINER = Joiner.on("=");
     private static final Joiner MSG_LINES_JOINER = Joiner.on("\n");
 
-    private static final String PROPERTY_BASE = "org.killbill.billing.plugin.forte";
-    private static final String PROPERTY_MERCHANT_ID = PROPERTY_BASE + ".merchantId";
+    public static final String PROPERTY_BASE = "org.killbill.billing.plugin.forte";
+    public static final String PROPERTY_MERCHANT_ID = PROPERTY_BASE + ".merchantId";
     private static final String PROPERTY_MERCHANT_PASSWORD = PROPERTY_BASE + ".password";
     private static final String PROPERTY_HOST = PROPERTY_BASE + ".host";
     private static final String PROPERTY_PORT = PROPERTY_BASE + ".port";
@@ -524,18 +524,28 @@ public class ForteAGIClient {
                                                                 @Nullable final String zip,
                                                                 @Nullable final String phone,
                                                                 @Nullable final String email,
-                                                                final String cardName,
-                                                                final String cardType,
-                                                                final String cardNumber,
-                                                                final String cardExpMonth,
-                                                                final String cardExpYear,
+                                                                @Nullable final String cardName,
+                                                                @Nullable final String cardType,
+                                                                @Nullable final String cardNumber,
+                                                                @Nullable final String cardExpMonth,
+                                                                @Nullable final String cardExpYear,
                                                                 @Nullable final Map<String, T> optionalData) throws IOException {
         final Builder<String, Object> additionalDataBuilder = ImmutableMap.<String, Object>builder();
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_NAME, cardName);
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_TYPE, cardType);
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_NUMBER, cardNumber);
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_EXPDATE_MONTH, cardExpMonth);
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_EXPDATE_YEAR, cardExpYear);
+        if (cardName != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_NAME, cardName);
+        }
+        if (cardType != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_TYPE, cardType);
+        }
+        if (cardNumber != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_NUMBER, cardNumber);
+        }
+        if (cardExpMonth != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_EXPDATE_MONTH, cardExpMonth);
+        }
+        if (cardExpYear != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CARD_EXPDATE_YEAR, cardExpYear);
+        }
 
         return createTCreditCardOrEFTTransaction(transactionType,
                                                  amount,
@@ -559,14 +569,20 @@ public class ForteAGIClient {
                                                          @Nullable final String zip,
                                                          @Nullable final String phone,
                                                          @Nullable final String email,
-                                                         final String transitRoutingNumber,
-                                                         final String accountNumber,
-                                                         final String accountType,
+                                                         @Nullable final String transitRoutingNumber,
+                                                         @Nullable final String accountNumber,
+                                                         @Nullable final String accountType,
                                                          @Nullable final Map<String, T> optionalData) throws IOException {
         final Builder<String, Object> additionalDataBuilder = ImmutableMap.<String, Object>builder();
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CHECK_TRN, transitRoutingNumber);
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CHECK_ACCOUNT, accountNumber);
-        additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CHECK_ACCOUNT_TYPE, accountType);
+        if (transitRoutingNumber != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CHECK_TRN, transitRoutingNumber);
+        }
+        if (accountNumber != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CHECK_ACCOUNT, accountNumber);
+        }
+        if (accountType != null) {
+            additionalDataBuilder.put(ForteAGIClient.ECOM_PAYMENT_CHECK_ACCOUNT_TYPE, accountType);
+        }
 
         return createTCreditCardOrEFTTransaction(transactionType,
                                                  amount,
@@ -678,6 +694,8 @@ public class ForteAGIClient {
             Preconditions.checkNotNull(request.get(ECOM_BILLTO_POSTAL_NAME_LAST), ECOM_BILLTO_POSTAL_NAME_LAST + " must be specified");
             Preconditions.checkNotNull(request.get(ECOM_PAYMENT_CHECK_TRN), ECOM_PAYMENT_CHECK_TRN + " must be specified");
             Preconditions.checkNotNull(request.get(ECOM_PAYMENT_CHECK_ACCOUNT_TYPE), ECOM_PAYMENT_CHECK_ACCOUNT_TYPE + " must be specified");
+        } else if (request.get(PG_PAYMENT_METHOD_ID) != null) {
+            Preconditions.checkNotNull(request.get(PG_TOTAL_AMOUNT), PG_TOTAL_AMOUNT + " must be specified");
         } else {
             // Administrative message
             Preconditions.checkNotNull(request.get(PG_ORIGINAL_TRACE_NUMBER), PG_ORIGINAL_TRACE_NUMBER + " must be specified");

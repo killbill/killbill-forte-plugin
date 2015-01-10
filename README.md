@@ -19,6 +19,9 @@ The following System Properties are required:
 * `org.killbill.billing.plugin.forte.password`: your password
 * `org.killbill.billing.plugin.forte.host`: AGI host (e.g. www.paymentsgateway.net)
 * `org.killbill.billing.plugin.forte.port`: AGI port (e.g. 6050)
+* `org.killbill.billing.plugin.forte.apiLoginId`: your API login id
+* `org.killbill.billing.plugin.forte.secureTransactionKey`: your transaction key
+* `org.killbill.billing.plugin.forte.test`: _true_ to use the sandbox
 
 Usage
 -----
@@ -37,6 +40,10 @@ curl -v \
        "pluginName": "killbill-forte",
        "pluginInfo": {
          "properties": [
+           {
+             "key": "accountHolderName",
+             "value": "Bob Smith"
+           },
            {
              "key": "trn",
              "value": "122400724"

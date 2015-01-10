@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="ClientService" targetNamespace="https://ws.paymentsgateway.net/v1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="https://ws.paymentsgateway.net/v1" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex">
+	<wsp:Policy wsu:Id="WSHttpBinding_IClientService_policy">
+		<wsp:ExactlyOne>
+			<wsp:All>
+				<sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+					<wsp:Policy>
+						<sp:TransportToken>
+							<wsp:Policy>
+								<sp:HttpsToken RequireClientCertificate="false"/>
+							</wsp:Policy>
+						</sp:TransportToken>
+						<sp:AlgorithmSuite>
+							<wsp:Policy>
+								<sp:Basic256/>
+							</wsp:Policy>
+						</sp:AlgorithmSuite>
+						<sp:Layout>
+							<wsp:Policy>
+								<sp:Strict/>
+							</wsp:Policy>
+						</sp:Layout>
+					</wsp:Policy>
+				</sp:TransportBinding>
+				<wsaw:UsingAddressing/>
+			</wsp:All>
+		</wsp:ExactlyOne>
+	</wsp:Policy>
+	<wsp:Policy wsu:Id="BasicHttpBinding_IClientService_policy">
+		<wsp:ExactlyOne>
+			<wsp:All>
+				<sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+					<wsp:Policy>
+						<sp:TransportToken>
+							<wsp:Policy>
+								<sp:HttpsToken RequireClientCertificate="false"/>
+							</wsp:Policy>
+						</sp:TransportToken>
+						<sp:AlgorithmSuite>
+							<wsp:Policy>
+								<sp:Basic256/>
+							</wsp:Policy>
+						</sp:AlgorithmSuite>
+						<sp:Layout>
+							<wsp:Policy>
+								<sp:Strict/>
+							</wsp:Policy>
+						</sp:Layout>
+					</wsp:Policy>
+				</sp:TransportBinding>
+			</wsp:All>
+		</wsp:ExactlyOne>
+	</wsp:Policy>
+	<wsdl:types>
+		<xsd:schema elementFormDefault="qualified" targetNamespace="https://ws.paymentsgateway.net/v1">
+			<xsd:element name="createClient">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="client" type="tns:ClientRecord"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="Authentication">
+				<xsd:sequence>
+					<xsd:element name="APILoginID" type="xsd:string"/>
+					<xsd:element name="TSHash" type="xsd:string"/>
+					<xsd:element name="UTCTime" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="Authentication" nillable="true" type="tns:Authentication"/>
+			<xsd:complexType name="ClientRecord">
+				<xsd:sequence>
+					<xsd:element name="MerchantID" type="xsd:int"/>
+					<xsd:element name="ClientID" type="xsd:int"/>
+					<xsd:element minOccurs="0" name="FirstName" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="LastName" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="CompanyName" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="Address1" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="Address2" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="City" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="State" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="PostalCode" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="CountryCode" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="PhoneNumber" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="FaxNumber" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="EmailAddress" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoFirstName" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoLastName" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoCompanyName" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoAddress1" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoAddress2" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoCity" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoState" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoPostalCode" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoCountryCode" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoPhoneNumber" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ShiptoFaxNumber" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="ConsumerID" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="Status" nillable="true" type="tns:ClientStatus"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="ClientRecord" nillable="true" type="tns:ClientRecord"/>
+			<xsd:simpleType name="ClientStatus">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Active">
+						<xsd:annotation>
+							<xsd:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
+							</xsd:appinfo>
+						</xsd:annotation>
+					</xsd:enumeration>
+					<xsd:enumeration value="Deleted">
+						<xsd:annotation>
+							<xsd:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
+							</xsd:appinfo>
+						</xsd:annotation>
+					</xsd:enumeration>
+					<xsd:enumeration value="Suspended">
+						<xsd:annotation>
+							<xsd:appinfo>
+								<EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
+							</xsd:appinfo>
+						</xsd:annotation>
+					</xsd:enumeration>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:element name="ClientStatus" nillable="true" type="tns:ClientStatus"/>
+			<xsd:element name="createClientResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="createClientResult" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updateClient">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="client" type="tns:ClientRecord"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updateClientResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="updateClientResult" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="deleteClient">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="MerchantID" type="xsd:int"/>
+						<xsd:element name="ClientID" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="deleteClientResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="deleteClientResult" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getClient">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="MerchantID" type="xsd:int"/>
+						<xsd:element name="ClientID" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getClientResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element minOccurs="0" name="getClientResult" nillable="true" type="tns:ArrayOfClientRecord"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="ArrayOfClientRecord">
+				<xsd:sequence>
+					<xsd:element minOccurs="0" maxOccurs="unbounded" name="ClientRecord" nillable="true" type="tns:ClientRecord"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="ArrayOfClientRecord" nillable="true" type="tns:ArrayOfClientRecord"/>
+			<xsd:element name="createPaymentMethod">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="payment" type="tns:PaymentMethod"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="PaymentMethod">
+				<xsd:sequence>
+					<xsd:element name="MerchantID" type="xsd:int"/>
+					<xsd:element name="ClientID" type="xsd:int"/>
+					<xsd:element name="PaymentMethodID" type="xsd:int"/>
+					<xsd:element minOccurs="0" name="AcctHolderName" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="CcCardNumber" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="CcExpirationDate" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="CcCardType" nillable="true" type="tns:CcCardType"/>
+					<xsd:element minOccurs="0" name="CcProcurementCard" nillable="true" type="xsd:boolean"/>
+					<xsd:element minOccurs="0" name="EcAccountNumber" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="EcAccountTRN" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="EcAccountType" nillable="true" type="tns:EcAccountType"/>
+					<xsd:element minOccurs="0" name="Note" nillable="true" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="IsDefault" nillable="true" type="xsd:boolean"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="PaymentMethod" nillable="true" type="tns:PaymentMethod"/>
+			<xsd:simpleType name="CcCardType">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="VISA"/>
+					<xsd:enumeration value="MAST"/>
+					<xsd:enumeration value="DISC"/>
+					<xsd:enumeration value="AMER"/>
+					<xsd:enumeration value="DINE"/>
+					<xsd:enumeration value="JCB"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:element name="CcCardType" nillable="true" type="tns:CcCardType"/>
+			<xsd:simpleType name="EcAccountType">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="CHECKING"/>
+					<xsd:enumeration value="SAVINGS"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:element name="EcAccountType" nillable="true" type="tns:EcAccountType"/>
+			<xsd:element name="createPaymentMethodResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="createPaymentMethodResult" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updatePaymentMethod">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="payment" type="tns:PaymentMethod"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updatePaymentMethodResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="updatePaymentMethodResult" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="deletePaymentMethod">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="MerchantID" type="xsd:int"/>
+						<xsd:element name="PaymentMethodID" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="deletePaymentMethodResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="deletePaymentMethodResult" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPaymentMethod">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ticket" type="tns:Authentication"/>
+						<xsd:element name="MerchantID" type="xsd:int"/>
+						<xsd:element name="ClientID" type="xsd:int"/>
+						<xsd:element name="PaymentMethodID" type="xsd:int"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPaymentMethodResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element minOccurs="0" name="getPaymentMethodResult" nillable="true" type="tns:ArrayOfPaymentMethod"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="ArrayOfPaymentMethod">
+				<xsd:sequence>
+					<xsd:element minOccurs="0" maxOccurs="unbounded" name="PaymentMethod" nillable="true" type="tns:PaymentMethod"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="ArrayOfPaymentMethod" nillable="true" type="tns:ArrayOfPaymentMethod"/>
+		</xsd:schema>
+		<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
+			<xs:element name="anyType" nillable="true" type="xs:anyType"/>
+			<xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+			<xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+			<xs:element name="boolean" nillable="true" type="xs:boolean"/>
+			<xs:element name="byte" nillable="true" type="xs:byte"/>
+			<xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+			<xs:element name="decimal" nillable="true" type="xs:decimal"/>
+			<xs:element name="double" nillable="true" type="xs:double"/>
+			<xs:element name="float" nillable="true" type="xs:float"/>
+			<xs:element name="int" nillable="true" type="xs:int"/>
+			<xs:element name="long" nillable="true" type="xs:long"/>
+			<xs:element name="QName" nillable="true" type="xs:QName"/>
+			<xs:element name="short" nillable="true" type="xs:short"/>
+			<xs:element name="string" nillable="true" type="xs:string"/>
+			<xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+			<xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+			<xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+			<xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+			<xs:element name="char" nillable="true" type="tns:char"/>
+			<xs:simpleType name="char">
+				<xs:restriction base="xs:int"/>
+			</xs:simpleType>
+			<xs:element name="duration" nillable="true" type="tns:duration"/>
+			<xs:simpleType name="duration">
+				<xs:restriction base="xs:duration">
+					<xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+					<xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+					<xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="guid" nillable="true" type="tns:guid"/>
+			<xs:simpleType name="guid">
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:attribute name="FactoryType" type="xs:QName"/>
+			<xs:attribute name="Id" type="xs:ID"/>
+			<xs:attribute name="Ref" type="xs:IDREF"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="IClientService_createClient_InputMessage">
+		<wsdl:part name="parameters" element="tns:createClient"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_createClient_OutputMessage">
+		<wsdl:part name="parameters" element="tns:createClientResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_updateClient_InputMessage">
+		<wsdl:part name="parameters" element="tns:updateClient"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_updateClient_OutputMessage">
+		<wsdl:part name="parameters" element="tns:updateClientResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_deleteClient_InputMessage">
+		<wsdl:part name="parameters" element="tns:deleteClient"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_deleteClient_OutputMessage">
+		<wsdl:part name="parameters" element="tns:deleteClientResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_getClient_InputMessage">
+		<wsdl:part name="parameters" element="tns:getClient"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_getClient_OutputMessage">
+		<wsdl:part name="parameters" element="tns:getClientResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_createPaymentMethod_InputMessage">
+		<wsdl:part name="parameters" element="tns:createPaymentMethod"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_createPaymentMethod_OutputMessage">
+		<wsdl:part name="parameters" element="tns:createPaymentMethodResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_updatePaymentMethod_InputMessage">
+		<wsdl:part name="parameters" element="tns:updatePaymentMethod"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_updatePaymentMethod_OutputMessage">
+		<wsdl:part name="parameters" element="tns:updatePaymentMethodResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_deletePaymentMethod_InputMessage">
+		<wsdl:part name="parameters" element="tns:deletePaymentMethod"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_deletePaymentMethod_OutputMessage">
+		<wsdl:part name="parameters" element="tns:deletePaymentMethodResponse"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_getPaymentMethod_InputMessage">
+		<wsdl:part name="parameters" element="tns:getPaymentMethod"/>
+	</wsdl:message>
+	<wsdl:message name="IClientService_getPaymentMethod_OutputMessage">
+		<wsdl:part name="parameters" element="tns:getPaymentMethodResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="IClientService">
+		<wsdl:operation name="createClient">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/createClient" message="tns:IClientService_createClient_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/createClientResponse" message="tns:IClientService_createClient_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="updateClient">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/updateClient" message="tns:IClientService_updateClient_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/updateClientResponse" message="tns:IClientService_updateClient_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="deleteClient">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/deleteClient" message="tns:IClientService_deleteClient_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/deleteClientResponse" message="tns:IClientService_deleteClient_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getClient">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/getClient" message="tns:IClientService_getClient_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/getClientResponse" message="tns:IClientService_getClient_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="createPaymentMethod">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/createPaymentMethod" message="tns:IClientService_createPaymentMethod_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/createPaymentMethodResponse" message="tns:IClientService_createPaymentMethod_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="updatePaymentMethod">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/updatePaymentMethod" message="tns:IClientService_updatePaymentMethod_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/updatePaymentMethodResponse" message="tns:IClientService_updatePaymentMethod_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="deletePaymentMethod">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/deletePaymentMethod" message="tns:IClientService_deletePaymentMethod_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/deletePaymentMethodResponse" message="tns:IClientService_deletePaymentMethod_OutputMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="getPaymentMethod">
+			<wsdl:input wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/getPaymentMethod" message="tns:IClientService_getPaymentMethod_InputMessage"/>
+			<wsdl:output wsaw:Action="https://ws.paymentsgateway.net/v1/IClientService/getPaymentMethodResponse" message="tns:IClientService_getPaymentMethod_OutputMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="WSHttpBinding_IClientService" type="tns:IClientService">
+		<wsp:PolicyReference URI="#WSHttpBinding_IClientService_policy"/>
+		<soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="createClient">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/createClient" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateClient">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/updateClient" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="deleteClient">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/deleteClient" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getClient">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/getClient" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createPaymentMethod">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/createPaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updatePaymentMethod">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/updatePaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="deletePaymentMethod">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/deletePaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPaymentMethod">
+			<soap12:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/getPaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:binding name="BasicHttpBinding_IClientService" type="tns:IClientService">
+		<wsp:PolicyReference URI="#BasicHttpBinding_IClientService_policy"/>
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="createClient">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/createClient" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateClient">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/updateClient" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="deleteClient">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/deleteClient" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getClient">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/getClient" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createPaymentMethod">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/createPaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updatePaymentMethod">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/updatePaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="deletePaymentMethod">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/deletePaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPaymentMethod">
+			<soap:operation soapAction="https://ws.paymentsgateway.net/v1/IClientService/getPaymentMethod" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ClientService">
+		<wsdl:port name="WSHttpBinding_IClientService" binding="tns:WSHttpBinding_IClientService">
+		</wsdl:port>
+		<wsdl:port name="BasicHttpBinding_IClientService" binding="tns:BasicHttpBinding_IClientService">
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

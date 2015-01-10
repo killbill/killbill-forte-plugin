@@ -36,8 +36,10 @@ import org.killbill.billing.payment.plugin.api.PaymentMethodInfoPlugin;
 import org.killbill.billing.payment.plugin.api.PaymentPluginApiException;
 import org.killbill.billing.payment.plugin.api.PaymentTransactionInfoPlugin;
 import org.killbill.billing.plugin.api.PluginProperties;
+import org.killbill.billing.plugin.api.payment.PluginPaymentMethodPlugin;
 import org.killbill.billing.plugin.api.payment.PluginPaymentPluginApi;
 import org.killbill.billing.plugin.forte.client.ForteAGIClient;
+import org.killbill.billing.plugin.forte.client.ForteWSClient;
 import org.killbill.billing.plugin.forte.dao.ForteDao;
 import org.killbill.billing.plugin.forte.dao.gen.tables.FortePaymentMethods;
 import org.killbill.billing.plugin.forte.dao.gen.tables.ForteResponses;
@@ -50,6 +52,7 @@ import org.killbill.killbill.osgi.libs.killbill.OSGIKillbillAPI;
 import org.killbill.killbill.osgi.libs.killbill.OSGIKillbillLogService;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
@@ -57,6 +60,7 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
 
     public static final String PROPERTY_FIRST_NAME = "firstName";
     public static final String PROPERTY_LAST_NAME = "lastName";
+    public static final String PROPERTY_ACCOUNT_HOLDER_NAME = "accountHolderName";
     public static final String PROPERTY_TRANSIT_ROUTING_NUMBER = "trn";
     public static final String PROPERTY_ACCOUNT_NUMBER = "accountNumber";
     public static final String PROPERTY_ACCOUNT_TYPE = "accountType";
@@ -65,10 +69,12 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
     private static final String SOFTWARE_VERSION = "1.0";
 
     private final ForteAGIClient client;
+    private final ForteWSClient wsClient;
 
     public FortePaymentPluginApi(final OSGIKillbillAPI killbillAPI, final OSGIConfigPropertiesService configProperties, final OSGIKillbillLogService logService, final Clock clock, final ForteDao dao) {
         super(killbillAPI, configProperties, logService, clock, dao);
         this.client = new ForteAGIClient(configProperties.getProperties());
+        this.wsClient = new ForteWSClient(configProperties.getProperties());
     }
 
     @Override
@@ -264,6 +270,38 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
         throw new PaymentPluginApiException(null, "PROCESS NOTIFICATION: unsupported operation");
     }
 
+    // Payment Method
+
+    @Override
+    public void addPaymentMethod(final UUID kbAccountId, final UUID kbPaymentMethodId, final PaymentMethodPlugin paymentMethodProps, final boolean setDefault, final Iterable<PluginProperty> properties, final CallContext context) throws PaymentPluginApiException {
+        final Map<String, String> safePropertiesMap = PluginProperties.toMap(paymentMethodProps.getProperties(), properties);
+
+        // TODO add option to skip tokenization
+        // TODO create customers (payment methods are not searchable in the VT)
+        final String token;
+        if (isCCTransaction(properties, null)) {
+            token = wsClient.tokenizeCreditCard(safePropertiesMap.get(PROPERTY_CC_FIRST_NAME),
+                                                safePropertiesMap.get(PROPERTY_CC_LAST_NAME),
+                                                safePropertiesMap.get(PROPERTY_CC_NUMBER),
+                                                safePropertiesMap.get(PROPERTY_CC_EXPIRATION_MONTH),
+                                                safePropertiesMap.get(PROPERTY_CC_EXPIRATION_YEAR));
+        } else {
+            token = wsClient.tokenizeECheck(safePropertiesMap.get(PROPERTY_ACCOUNT_HOLDER_NAME),
+                                            safePropertiesMap.get(PROPERTY_TRANSIT_ROUTING_NUMBER),
+                                            safePropertiesMap.get(PROPERTY_ACCOUNT_NUMBER),
+                                            safePropertiesMap.get(PROPERTY_ACCOUNT_TYPE));
+        }
+        safePropertiesMap.put(PROPERTY_TOKEN, token);
+
+        // Delete sensitive data
+        safePropertiesMap.remove(PROPERTY_CC_NUMBER);
+        safePropertiesMap.remove(PROPERTY_ACCOUNT_NUMBER);
+        final PluginPaymentMethodPlugin safePaymentMethodProps = new PluginPaymentMethodPlugin(kbPaymentMethodId, token, setDefault, ImmutableList.<PluginProperty>of());
+
+        final Iterable<PluginProperty> safeProperties = PluginProperties.buildPluginProperties(safePropertiesMap);
+        super.addPaymentMethod(kbAccountId, kbPaymentMethodId, safePaymentMethodProps, setDefault, safeProperties, context);
+    }
+
     private PaymentTransactionInfoPlugin executeTransaction(final TransactionType transactionType,
                                                             final TransactionExecutor transactionExecutor,
                                                             final UUID kbAccountId,
@@ -291,8 +329,42 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
         final String paymentMethodAccountNumber = paymentMethodsRecord == null ? null : paymentMethodsRecord.getAccountNumber();
         final String accountNumber = PluginProperties.getValue(PROPERTY_ACCOUNT_NUMBER, paymentMethodAccountNumber, properties);
 
+        final String paymentMethodToken = paymentMethodsRecord == null ? null : paymentMethodsRecord.getToken();
+        final String token = PluginProperties.getValue(PROPERTY_TOKEN, paymentMethodToken, properties);
+
         final Map<String, String> response;
-        if (ccNumber != null) {
+        if (token != null) {
+            final boolean ccTransaction = isCCTransaction(properties, paymentMethodsRecord);
+
+            final Builder<String, Object> additionalDataWithTokenBuilder = ImmutableMap.<String, Object>builder();
+            additionalDataWithTokenBuilder.putAll(additionalData);
+            additionalDataWithTokenBuilder.put(ForteAGIClient.PG_PAYMENT_METHOD_ID, token);
+            final Map<String, Object> additionalDataWithToken = additionalDataWithTokenBuilder.build();
+
+            try {
+                if (ccTransaction) {
+                    response = transactionExecutor.execute(amount,
+                                                           customerFirstName,
+                                                           customerLastName,
+                                                           null,
+                                                           null,
+                                                           null,
+                                                           null,
+                                                           null,
+                                                           additionalDataWithToken);
+                } else {
+                    response = transactionExecutor.execute(amount,
+                                                           customerFirstName,
+                                                           customerLastName,
+                                                           null,
+                                                           null,
+                                                           null,
+                                                           additionalDataWithToken);
+                }
+            } catch (IOException e) {
+                throw new PaymentPluginApiException(null, e);
+            }
+        } else if (ccNumber != null) {
             // By convention, support the same keys as the Ruby plugins (https://github.com/killbill/killbill-plugin-framework-ruby/blob/master/lib/killbill/helpers/active_merchant/payment_plugin.rb)
             final String paymentMethodExpirationMonth = paymentMethodsRecord == null ? null : paymentMethodsRecord.getCcExpMonth();
             final String ccExpirationMonth = PluginProperties.getValue(PROPERTY_CC_EXPIRATION_MONTH, paymentMethodExpirationMonth, properties);
@@ -371,6 +443,10 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
         } catch (final SQLException e) {
             throw new PaymentPluginApiException("Payment went through, but we encountered a database error. Payment details: " + response.toString(), e);
         }
+    }
+
+    private boolean isCCTransaction(final Iterable<PluginProperty> properties, @Nullable final FortePaymentMethodsRecord paymentMethodsRecord) {
+        return (paymentMethodsRecord != null && paymentMethodsRecord.getCcType() != null) || (PluginProperties.getValue(PROPERTY_CC_TYPE, null, properties) != null);
     }
 
     private Map<String, Object> buildAdditionalData(final UUID kbAccountId, final UUID kbPaymentId, final UUID kbTransactionId, final UUID kbPaymentMethodId, final CallContext context) {

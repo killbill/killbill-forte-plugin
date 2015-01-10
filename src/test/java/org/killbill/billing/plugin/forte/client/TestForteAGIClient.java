@@ -25,18 +25,6 @@ import org.testng.annotations.Test;
 
 public class TestForteAGIClient extends TestRemoteBase {
 
-    private static final String CUSTOMER_FIRST_NAME = "John";
-    private static final String CUSTOMER_LAST_NAME = "Smith";
-    private static final String CARD_NAME = "John Smith";
-    private static final String CARD_TYPE = "Visa";
-    private static final String CARD_NUMBER = "4111111111111111";
-    private static final String CARD_EXP_MONTH = "8";
-    private static final String CARD_EXP_YEAR = "2018";
-
-    private static final String TRANSIT_ROUTING_NUMBER = "122400724";
-    private static final String ACCOUNT_NUMBER = "123456789";
-    private static final String SAVINGS = "S";
-
     private static final BigDecimal AMOUNT = new BigDecimal("10");
     private static final Map<String, Object> OPTIONAL_DATA = null;
 
