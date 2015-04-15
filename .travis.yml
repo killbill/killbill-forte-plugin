@@ -1,16 +1,39 @@
 language: java
-script: mvn clean install -Ptravis
+
+sudo: false
+cache:
+  directories:
+      - $HOME/.m2
+
+before_script: '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && printf "org.killbill.billing.plugin.forte.merchantId=${FORTE_MERCHANT_ID}\\norg.killbill.billing.plugin.forte.password=${FORTE_PASSWORD}\\norg.killbill.billing.plugin.forte.host=${FORTE_HOST}\\norg.killbill.billing.plugin.forte.port=${FORTE_PORT}\\norg.killbill.billing.plugin.forte.apiLoginId=${FORTE_API_LOGIN_ID}\\norg.killbill.billing.plugin.forte.secureTransactionKey=${FORTE_SECURE_TRANSACTION_KEY}\\norg.killbill.billing.plugin.forte.test=${FORTE_TEST}\\n" > src/test/resources/forte.properties'
+after_script: rm -f src/test/resources/forte.properties
+script: if [[ -v COMMAND ]]; then $COMMAND; else travis_retry mvn clean install $PHASE | egrep -v 'Download|Install'; [ ${PIPESTATUS[0]} == 0 ]; fi
 # Remove --quiet to avoid timeouts
-install: mvn install -DskipTests=true
+install: mvn -U install -DskipTests=true | egrep -v 'Download|Install'
 
 notifications:
   email:
     - kill-bill-commits@googlegroups.com
 
-jdk:
-  - openjdk6
-  - openjdk7
-  - oraclejdk7
-
 env:
-  - MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=192m"
+  global:
+    - MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=192m"
+
+matrix:
+  allow_failures:
+    - jdk: oraclejdk8
+  include:
+    - env: PHASE="-Ptravis"
+      jdk: openjdk7
+    - env: PHASE="-Ptravis"
+      jdk: oraclejdk7
+    - env: PHASE="-Ptravis,jdk17"
+      jdk: openjdk7
+    - env: PHASE="-Ptravis,jdk17"
+      jdk: oraclejdk7
+    - env: PHASE="-Ptravis,jdk18"
+      jdk: oraclejdk8
+  fast_finish: true
+
+after_success:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && echo "<settings><servers><server><id>sonatype-nexus-snapshots</id><username>\${env.OSSRH_USER}</username><password>\${env.OSSRH_PASS}</password></server></servers></settings>" > ~/settings.xml && travis_wait mvn deploy -DskipTests=true --settings ~/settings.xml | egrep -v "Download|Install|Upload" ; rm -f ~/settings.xml'
