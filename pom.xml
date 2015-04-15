@@ -19,7 +19,7 @@
     <parent>
         <artifactId>killbill-oss-parent</artifactId>
         <groupId>org.kill-bill.billing</groupId>
-        <version>0.9.4</version>
+        <version>0.11-SNAPSHOT</version>
     </parent>
     <groupId>org.kill-bill.billing.plugin.java</groupId>
     <artifactId>forte-plugin</artifactId>
@@ -114,7 +114,6 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
-            <version>3.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.kill-bill.billing</groupId>

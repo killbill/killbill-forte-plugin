@@ -274,7 +274,7 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
 
     @Override
     public void addPaymentMethod(final UUID kbAccountId, final UUID kbPaymentMethodId, final PaymentMethodPlugin paymentMethodProps, final boolean setDefault, final Iterable<PluginProperty> properties, final CallContext context) throws PaymentPluginApiException {
-        final Map<String, String> safePropertiesMap = PluginProperties.toMap(paymentMethodProps.getProperties(), properties);
+        final Map<String, String> safePropertiesMap = PluginProperties.toStringMap(paymentMethodProps.getProperties(), properties);
 
         // TODO add option to skip tokenization
         // TODO create customers (payment methods are not searchable in the VT)
