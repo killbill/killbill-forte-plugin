@@ -5,10 +5,17 @@ Plugin to use [Forte](http://www.forte.net/) as a gateway.
 
 Release builds are available on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.kill-bill.billing.plugin.java%22%20AND%20a%3A%22forte-plugin%22) with coordinates `org.kill-bill.billing.plugin.java:forte-plugin`.
 
+Kill Bill compatibility
+-----------------------
+
+| Plugin version | Kill Bill version |
+| -------------: | ----------------: |
+| 0.1.x          | 0.14.x            |
+
 Requirements
 ------------
 
-The plugin needs a database. The latest version of the schema can be found here: https://github.com/killbill/killbill-forte-plugin/blob/master/src/main/resources/ddl.sql.
+The plugin needs a database. The latest version of the schema can be found [here](https://github.com/killbill/killbill-forte-plugin/blob/master/src/main/resources/ddl.sql).
 
 Configuration
 -------------
