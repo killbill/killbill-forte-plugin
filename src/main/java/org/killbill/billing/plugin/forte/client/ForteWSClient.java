@@ -16,7 +16,10 @@
 
 package org.killbill.billing.plugin.forte.client;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Proxy;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
@@ -36,6 +39,7 @@ import org.killbill.billing.plugin.forte.client.ws.LoggingInInterceptor;
 import org.killbill.billing.plugin.forte.client.ws.LoggingOutInterceptor;
 
 import com.google.common.annotations.VisibleForTesting;
+
 import https.ws_paymentsgateway_net.v1.Authentication;
 import https.ws_paymentsgateway_net.v1.CcCardType;
 import https.ws_paymentsgateway_net.v1.ClientRecord;
@@ -48,7 +52,7 @@ import static org.killbill.billing.plugin.forte.client.ForteAGIClient.PROPERTY_B
 import static org.killbill.billing.plugin.forte.client.ForteAGIClient.PROPERTY_MERCHANT_ID;
 
 // See http://www.paymentsgateway.com/developerDocumentation/Integration/webservices/merchantservice.aspx
-public class ForteWSClient {
+public class ForteWSClient implements Closeable {
 
     private static final String PROPERTY_API_LOGIN_ID = PROPERTY_BASE + ".apiLoginId";
     private static final String PROPERTY_SECURE_TRANSACTION_KEY = PROPERTY_BASE + ".secureTransactionKey";
@@ -82,7 +86,24 @@ public class ForteWSClient {
         }
 
         final String url = test ? "https://sandbox.paymentsgateway.net/ws/Client.svc" : "https://ws.paymentsgateway.net/Service/v1/Client.svc";
-        this.client = createClient(url);
+
+        // Make sure to set the context class loader, see javax.xml.ws.spi.FactoryFinder#find
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        try {
+            this.client = createClient(url);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        try {
+            // See ClientProxy.getClient
+            ((ClientProxy) Proxy.getInvocationHandler(client)).close();
+        } catch (final RuntimeException ignored) {
+        }
     }
 
     public String createClient(final String customerFirstName,
