@@ -174,7 +174,10 @@ public class ForteAGIClient {
     private final SocketFactory factory;
 
     public ForteAGIClient(final Properties properties) {
-        this(properties.getProperty(PROPERTY_MERCHANT_ID), properties.getProperty(PROPERTY_MERCHANT_PASSWORD), properties.getProperty(PROPERTY_HOST), Integer.parseInt(properties.getProperty(PROPERTY_PORT)));
+        this(properties.getProperty(PROPERTY_MERCHANT_ID),
+             properties.getProperty(PROPERTY_MERCHANT_PASSWORD),
+             properties.getProperty(PROPERTY_HOST),
+             properties.getProperty(PROPERTY_PORT) == null ? 6050 : Integer.parseInt(properties.getProperty(PROPERTY_PORT)));
     }
 
     private ForteAGIClient(final String merchantId, final String password, final String host, final Integer port) {

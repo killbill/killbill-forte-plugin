@@ -55,25 +55,30 @@ public class ForteWSClient {
     private static final String PROPERTY_TEST = PROPERTY_BASE + ".test";
     private static final String HMAC_MD5 = "HmacMD5";
 
-    private final int merchantId;
+    private final Integer merchantId;
     private final String apiLoginId;
     private final SecretKeySpec key;
     private final IClientService client;
 
     public ForteWSClient(final Properties properties) {
-        this(Integer.parseInt(properties.getProperty(PROPERTY_MERCHANT_ID)),
+        this(properties.getProperty(PROPERTY_MERCHANT_ID) == null ? null : Integer.parseInt(properties.getProperty(PROPERTY_MERCHANT_ID)),
              properties.getProperty(PROPERTY_API_LOGIN_ID),
              properties.getProperty(PROPERTY_SECURE_TRANSACTION_KEY),
              properties.getProperty(PROPERTY_TEST) == null ? false : Boolean.valueOf(properties.getProperty(PROPERTY_TEST)));
     }
 
-    public ForteWSClient(final int merchantId, final String apiLoginId, final String secureTransactionKey, final Boolean test) {
+    public ForteWSClient(final Integer merchantId, final String apiLoginId, final String secureTransactionKey, final Boolean test) {
         this.merchantId = merchantId;
         this.apiLoginId = apiLoginId;
-        try {
-            this.key = new SecretKeySpec(secureTransactionKey.getBytes("UTF-8"), HMAC_MD5);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
+        if (secureTransactionKey == null) {
+            // Not configured
+            this.key = null;
+        } else {
+            try {
+                this.key = new SecretKeySpec(secureTransactionKey.getBytes("UTF-8"), HMAC_MD5);
+            } catch (UnsupportedEncodingException e) {
+                throw new IllegalStateException(e);
+            }
         }
 
         final String url = test ? "https://sandbox.paymentsgateway.net/ws/Client.svc" : "https://ws.paymentsgateway.net/Service/v1/Client.svc";
