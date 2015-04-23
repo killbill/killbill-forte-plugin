@@ -20,7 +20,7 @@ The plugin needs a database. The latest version of the schema can be found [here
 Configuration
 -------------
 
-The following System Properties are required:
+The following properties are required:
 
 * `org.killbill.billing.plugin.forte.merchantId`: your merchant id
 * `org.killbill.billing.plugin.forte.password`: your password
@@ -29,6 +29,26 @@ The following System Properties are required:
 * `org.killbill.billing.plugin.forte.apiLoginId`: your API login id
 * `org.killbill.billing.plugin.forte.secureTransactionKey`: your transaction key
 * `org.killbill.billing.plugin.forte.test`: _true_ to use the sandbox
+
+These properties can be specified globally via System Properties or on a per tenant basis:
+
+```
+curl -v \
+     -X POST \
+     -u admin:password \
+     -H 'X-Killbill-ApiKey: bob' \
+     -H 'X-Killbill-ApiSecret: lazar' \
+     -H 'X-Killbill-CreatedBy: admin' \
+     -H 'Content-Type: text/plain' \
+     -d 'org.killbill.billing.plugin.forte.merchantId=AAA
+org.killbill.billing.plugin.forte.password=BBB
+org.killbill.billing.plugin.forte.host=CCC
+org.killbill.billing.plugin.forte.port=DDD
+org.killbill.billing.plugin.forte.apiLoginId=EEE
+org.killbill.billing.plugin.forte.secureTransactionKey=FFF
+org.killbill.billing.plugin.forte.test=true' \
+     http://127.0.0.1:8080/1.0/kb/tenants/uploadPluginConfig/killbill-forte
+```
 
 Usage
 -----
