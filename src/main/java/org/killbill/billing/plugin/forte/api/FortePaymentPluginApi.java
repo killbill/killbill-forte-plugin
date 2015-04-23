@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The Billing Project, LLC
+ * Copyright 2014-2015 The Billing Project, LLC
  *
  * The Billing Project licenses this file to you under the Apache License, version 2.0
  * (the "License"); you may not use this file except in compliance with the
@@ -40,6 +40,8 @@ import org.killbill.billing.plugin.api.payment.PluginPaymentMethodPlugin;
 import org.killbill.billing.plugin.api.payment.PluginPaymentPluginApi;
 import org.killbill.billing.plugin.forte.client.ForteAGIClient;
 import org.killbill.billing.plugin.forte.client.ForteWSClient;
+import org.killbill.billing.plugin.forte.core.ForteAGIConfigurationHandler;
+import org.killbill.billing.plugin.forte.core.ForteWSConfigurationHandler;
 import org.killbill.billing.plugin.forte.dao.ForteDao;
 import org.killbill.billing.plugin.forte.dao.gen.tables.FortePaymentMethods;
 import org.killbill.billing.plugin.forte.dao.gen.tables.ForteResponses;
@@ -68,13 +70,19 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
     private static final String SOFTWARE_NAME = "KILLBILL";
     private static final String SOFTWARE_VERSION = "1.0";
 
-    private final ForteAGIClient client;
-    private final ForteWSClient wsClient;
+    private final ForteAGIConfigurationHandler forteAGIConfigurationHandler;
+    private final ForteWSConfigurationHandler forteWSConfigurationHandler;
 
-    public FortePaymentPluginApi(final OSGIKillbillAPI killbillAPI, final OSGIConfigPropertiesService configProperties, final OSGIKillbillLogService logService, final Clock clock, final ForteDao dao) {
+    public FortePaymentPluginApi(final ForteAGIConfigurationHandler forteAGIConfigurationHandler,
+                                 final ForteWSConfigurationHandler forteWSConfigurationHandler,
+                                 final OSGIKillbillAPI killbillAPI,
+                                 final OSGIConfigPropertiesService configProperties,
+                                 final OSGIKillbillLogService logService,
+                                 final Clock clock,
+                                 final ForteDao dao) {
         super(killbillAPI, configProperties, logService, clock, dao);
-        this.client = new ForteAGIClient(configProperties.getProperties());
-        this.wsClient = new ForteWSClient(configProperties.getProperties());
+        this.forteAGIConfigurationHandler = forteAGIConfigurationHandler;
+        this.forteWSConfigurationHandler = forteWSConfigurationHandler;
     }
 
     @Override
@@ -103,26 +111,26 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
                                   new TransactionExecutor() {
                                       @Override
                                       public Map<String, String> execute(final BigDecimal amount, final String customerFirstName, final String customerLastName, final String cardName, final String cardType, final String cardNumber, final String cardExpMonth, final String cardExpYear, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createAuthTransaction(amount,
-                                                                              customerFirstName,
-                                                                              customerFirstName,
-                                                                              cardName,
-                                                                              cardType,
-                                                                              cardNumber,
-                                                                              cardExpMonth,
-                                                                              cardExpYear,
-                                                                              optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createAuthTransaction(amount,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           cardName,
+                                                                                                                                           cardType,
+                                                                                                                                           cardNumber,
+                                                                                                                                           cardExpMonth,
+                                                                                                                                           cardExpYear,
+                                                                                                                                           optionalData);
                                       }
 
                                       @Override
                                       public Map<String, String> execute(final BigDecimal amount, final String customerFirstName, final String customerLastName, final String transitRoutingNumber, final String accountNumber, final String accountType, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createAuthTransaction(amount,
-                                                                              customerFirstName,
-                                                                              customerFirstName,
-                                                                              transitRoutingNumber,
-                                                                              accountNumber,
-                                                                              accountType,
-                                                                              optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createAuthTransaction(amount,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           transitRoutingNumber,
+                                                                                                                                           accountNumber,
+                                                                                                                                           accountType,
+                                                                                                                                           optionalData);
                                       }
                                   },
                                   kbAccountId,
@@ -141,9 +149,9 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
                                   new TransactionExecutor() {
                                       @Override
                                       public Map<String, String> execute(final String originalTraceNumber, final String originalAuthorizationCode, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createCaptureTransaction(originalTraceNumber,
-                                                                                 originalAuthorizationCode,
-                                                                                 optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createCaptureTransaction(originalTraceNumber,
+                                                                                                                                              originalAuthorizationCode,
+                                                                                                                                              optionalData);
                                       }
                                   },
                                   kbAccountId,
@@ -162,26 +170,26 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
                                   new TransactionExecutor() {
                                       @Override
                                       public Map<String, String> execute(final BigDecimal amount, final String customerFirstName, final String customerLastName, final String cardName, final String cardType, final String cardNumber, final String cardExpMonth, final String cardExpYear, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createSaleTransaction(amount,
-                                                                              customerFirstName,
-                                                                              customerFirstName,
-                                                                              cardName,
-                                                                              cardType,
-                                                                              cardNumber,
-                                                                              cardExpMonth,
-                                                                              cardExpYear,
-                                                                              optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createSaleTransaction(amount,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           cardName,
+                                                                                                                                           cardType,
+                                                                                                                                           cardNumber,
+                                                                                                                                           cardExpMonth,
+                                                                                                                                           cardExpYear,
+                                                                                                                                           optionalData);
                                       }
 
                                       @Override
                                       public Map<String, String> execute(final BigDecimal amount, final String customerFirstName, final String customerLastName, final String transitRoutingNumber, final String accountNumber, final String accountType, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createSaleTransaction(amount,
-                                                                              customerFirstName,
-                                                                              customerFirstName,
-                                                                              transitRoutingNumber,
-                                                                              accountNumber,
-                                                                              accountType,
-                                                                              optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createSaleTransaction(amount,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           customerFirstName,
+                                                                                                                                           transitRoutingNumber,
+                                                                                                                                           accountNumber,
+                                                                                                                                           accountType,
+                                                                                                                                           optionalData);
                                       }
                                   },
                                   kbAccountId,
@@ -200,9 +208,9 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
                                   new TransactionExecutor() {
                                       @Override
                                       public Map<String, String> execute(final String originalTraceNumber, final String originalAuthorizationCode, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createVoidTransaction(originalTraceNumber,
-                                                                              originalAuthorizationCode,
-                                                                              optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createVoidTransaction(originalTraceNumber,
+                                                                                                                                           originalAuthorizationCode,
+                                                                                                                                           optionalData);
                                       }
                                   },
                                   kbAccountId,
@@ -221,26 +229,26 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
                                   new TransactionExecutor() {
                                       @Override
                                       public Map<String, String> execute(final BigDecimal amount, final String customerFirstName, final String customerLastName, final String cardName, final String cardType, final String cardNumber, final String cardExpMonth, final String cardExpYear, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createCreditTransaction(amount,
-                                                                                customerFirstName,
-                                                                                customerFirstName,
-                                                                                cardName,
-                                                                                cardType,
-                                                                                cardNumber,
-                                                                                cardExpMonth,
-                                                                                cardExpYear,
-                                                                                optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createCreditTransaction(amount,
+                                                                                                                                             customerFirstName,
+                                                                                                                                             customerFirstName,
+                                                                                                                                             cardName,
+                                                                                                                                             cardType,
+                                                                                                                                             cardNumber,
+                                                                                                                                             cardExpMonth,
+                                                                                                                                             cardExpYear,
+                                                                                                                                             optionalData);
                                       }
 
                                       @Override
                                       public Map<String, String> execute(final BigDecimal amount, final String customerFirstName, final String customerLastName, final String transitRoutingNumber, final String accountNumber, final String accountType, @Nullable final Map<String, Object> optionalData) throws IOException {
-                                          return client.createCreditTransaction(amount,
-                                                                                customerFirstName,
-                                                                                customerFirstName,
-                                                                                transitRoutingNumber,
-                                                                                accountNumber,
-                                                                                accountType,
-                                                                                optionalData);
+                                          return forteAGIConfigurationHandler.getConfigurable(context.getTenantId()).createCreditTransaction(amount,
+                                                                                                                                             customerFirstName,
+                                                                                                                                             customerFirstName,
+                                                                                                                                             transitRoutingNumber,
+                                                                                                                                             accountNumber,
+                                                                                                                                             accountType,
+                                                                                                                                             optionalData);
                                       }
                                   },
                                   kbAccountId,
@@ -279,6 +287,7 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
         // TODO add option to skip tokenization
         // TODO create customers (payment methods are not searchable in the VT)
         final String token;
+        final ForteWSClient wsClient = forteWSConfigurationHandler.getConfigurable(context.getTenantId());
         if (isCCTransaction(properties, null)) {
             token = wsClient.tokenizeCreditCard(safePropertiesMap.get(PROPERTY_CC_FIRST_NAME),
                                                 safePropertiesMap.get(PROPERTY_CC_LAST_NAME),
