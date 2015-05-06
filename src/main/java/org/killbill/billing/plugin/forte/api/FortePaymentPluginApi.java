@@ -19,6 +19,7 @@ package org.killbill.billing.plugin.forte.api;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -282,7 +283,8 @@ public class FortePaymentPluginApi extends PluginPaymentPluginApi<ForteResponses
 
     @Override
     public void addPaymentMethod(final UUID kbAccountId, final UUID kbPaymentMethodId, final PaymentMethodPlugin paymentMethodProps, final boolean setDefault, final Iterable<PluginProperty> properties, final CallContext context) throws PaymentPluginApiException {
-        final Map<String, String> safePropertiesMap = PluginProperties.toStringMap(paymentMethodProps.getProperties(), properties);
+        // The resulting map from toStringMap may not be mutable
+        final Map<String, String> safePropertiesMap = new HashMap<String, String>(PluginProperties.toStringMap(paymentMethodProps.getProperties(), properties));
 
         // TODO add option to skip tokenization
         // TODO create customers (payment methods are not searchable in the VT)
