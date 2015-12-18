@@ -197,7 +197,8 @@
                         <Export-Package />
                         <Private-Package>org.killbill.billing.plugin.forte.*</Private-Package>
                         <!-- Optional resolution because exported by the Felix system bundle -->
-                        <Import-Package>org.killbill.billing.account.api;
+                        <Import-Package>
+                            org.killbill.billing.account.api;
                             org.killbill.billing.catalog.api;
                             org.killbill.billing.invoice.api;
                             org.killbill.billing.entitlement.api;
@@ -208,7 +209,7 @@
                             org.killbill.billing.osgi.api.config;
                             org.killbill.billing.payment.api;
                             org.killbill.billing.payment.plugin.api;
-                            org.killbill.billing.routing.plugin.api;
+                            org.killbill.billing.control.plugin.api;
                             org.killbill.billing.tenant.api;
                             org.killbill.billing.usage.api;
                             org.killbill.billing.util.api;
@@ -338,6 +339,7 @@
                             javax.naming.ldap;
                             javax.naming.spi;
                             javax.naming;
+                            org.osgi.service.log;
                             version="[0,3)",
                             *;resolution:=optional
                         </Import-Package>
