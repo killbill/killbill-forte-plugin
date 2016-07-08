@@ -28,6 +28,9 @@ import javax.annotation.Nullable;
 import org.joda.time.DateTime;
 import org.killbill.billing.account.api.Account;
 import org.killbill.billing.catalog.api.Currency;
+import org.killbill.billing.osgi.libs.killbill.OSGIConfigPropertiesService;
+import org.killbill.billing.osgi.libs.killbill.OSGIKillbillAPI;
+import org.killbill.billing.osgi.libs.killbill.OSGIKillbillLogService;
 import org.killbill.billing.payment.api.PaymentMethodPlugin;
 import org.killbill.billing.payment.api.PluginProperty;
 import org.killbill.billing.payment.api.TransactionType;
@@ -50,9 +53,6 @@ import org.killbill.billing.plugin.forte.dao.gen.tables.records.FortePaymentMeth
 import org.killbill.billing.plugin.forte.dao.gen.tables.records.ForteResponsesRecord;
 import org.killbill.billing.util.callcontext.CallContext;
 import org.killbill.clock.Clock;
-import org.killbill.killbill.osgi.libs.killbill.OSGIConfigPropertiesService;
-import org.killbill.killbill.osgi.libs.killbill.OSGIKillbillAPI;
-import org.killbill.killbill.osgi.libs.killbill.OSGIKillbillLogService;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;

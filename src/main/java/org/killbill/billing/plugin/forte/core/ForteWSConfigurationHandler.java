@@ -19,10 +19,10 @@ package org.killbill.billing.plugin.forte.core;
 
 import java.util.Properties;
 
+import org.killbill.billing.osgi.libs.killbill.OSGIKillbillAPI;
+import org.killbill.billing.osgi.libs.killbill.OSGIKillbillLogService;
 import org.killbill.billing.plugin.api.notification.PluginTenantConfigurableConfigurationHandler;
 import org.killbill.billing.plugin.forte.client.ForteWSClient;
-import org.killbill.killbill.osgi.libs.killbill.OSGIKillbillAPI;
-import org.killbill.killbill.osgi.libs.killbill.OSGIKillbillLogService;
 
 public class ForteWSConfigurationHandler extends PluginTenantConfigurableConfigurationHandler<ForteWSClient> {
 

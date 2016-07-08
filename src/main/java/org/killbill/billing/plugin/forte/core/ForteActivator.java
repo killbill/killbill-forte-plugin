@@ -22,6 +22,7 @@ import javax.servlet.Servlet;
 import javax.servlet.http.HttpServlet;
 
 import org.killbill.billing.osgi.api.OSGIPluginProperties;
+import org.killbill.billing.osgi.libs.killbill.KillbillActivatorBase;
 import org.killbill.billing.payment.plugin.api.PaymentPluginApi;
 import org.killbill.billing.plugin.api.notification.PluginConfigurationEventHandler;
 import org.killbill.billing.plugin.forte.api.FortePaymentPluginApi;
@@ -30,8 +31,6 @@ import org.killbill.billing.plugin.forte.client.ForteWSClient;
 import org.killbill.billing.plugin.forte.dao.ForteDao;
 import org.killbill.clock.Clock;
 import org.killbill.clock.DefaultClock;
-import org.killbill.killbill.osgi.libs.killbill.KillbillActivatorBase;
-import org.killbill.killbill.osgi.libs.killbill.OSGIKillbillEventDispatcher.OSGIKillbillEventHandler;
 import org.osgi.framework.BundleContext;
 
 public class ForteActivator extends KillbillActivatorBase {
@@ -52,6 +51,9 @@ public class ForteActivator extends KillbillActivatorBase {
         final ForteServlet forteServlet = new ForteServlet();
         registerServlet(context, forteServlet);
 
+        forteAGIConfigurationHandler = new ForteAGIConfigurationHandler(PLUGIN_NAME, killbillAPI, logService);
+        forteWSConfigurationHandler = new ForteWSConfigurationHandler(PLUGIN_NAME, killbillAPI, logService);
+
         final ForteAGIClient globalForteAGIClient = forteAGIConfigurationHandler.createConfigurable(configProperties.getProperties());
         forteAGIConfigurationHandler.setDefaultConfigurable(globalForteAGIClient);
 
@@ -63,13 +65,12 @@ public class ForteActivator extends KillbillActivatorBase {
         registerPaymentPluginApi(context, pluginApi);
     }
 
-    @Override
-    public OSGIKillbillEventHandler getOSGIKillbillEventHandler() {
-        forteAGIConfigurationHandler = new ForteAGIConfigurationHandler(PLUGIN_NAME, killbillAPI, logService);
-        forteWSConfigurationHandler = new ForteWSConfigurationHandler(PLUGIN_NAME, killbillAPI, logService);
-        return new PluginConfigurationEventHandler(forteAGIConfigurationHandler, forteWSConfigurationHandler);
-    }
 
+    private void registerEventHandler() {
+        final PluginConfigurationEventHandler handler = new PluginConfigurationEventHandler(forteAGIConfigurationHandler, forteWSConfigurationHandler);
+        dispatcher.registerEventHandlers(handler);
+
+    }
     private void registerServlet(final BundleContext context, final HttpServlet servlet) {
         final Hashtable<String, String> props = new Hashtable<String, String>();
         props.put(OSGIPluginProperties.PLUGIN_NAME_PROP, PLUGIN_NAME);
